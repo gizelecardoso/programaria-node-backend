@@ -2,35 +2,23 @@ const express = require('express') //inicia express
 const { v4: uuidv4 } = require('uuid') //inicia uuid
 const router = express.Router() //configuração da primeira parte da rota
 
+const conectBancoDeDados = require('./bancoDeDados')//ligando ao arquivo BancoDeDados
+conectBancoDeDados() //função que conecta o banco de dados
+
+const Mulher = require('./mulherModel')
 const app = express() //inicia app
 app.use(express.json()) //prepara o dado que chegou via resquest para o formato json
 const porta = 3333 //cria porta
 
-//criação da lista inicial de mulheres
-const mulheres = [
-  {
-    id: '1',
-    nome: 'Simara Conceição',
-    imagem: 'https://bit.ly/3LJIyOF',
-    minibio: 'Desenvolvedora e instrutora',
-  },
-  {
-    id: '2',
-    nome: 'Iana Chan',
-    imagem: 'https://bit.ly/3JCXBqP',
-    minibio: 'CEO & Founder da PrograMaria',
-  },
-  {
-    id: '3',
-    nome: 'Luana Pimentel',
-    imagem: 'https://bit.ly/3FKpFaz',
-    minibio: 'Senior Staff Software Engineer',
-  }
-]
-
 //GET
-function mostraMulheres(request, response) {
-  response.json(mulheres)
+async function mostraMulheres(request, response) {
+  try {
+    const mulheresVindasDoBancoDeDados = await Mulher.find()
+
+    response.json(mulheresVindasDoBancoDeDados)
+  } catch (erro) {
+    console.log(erro)
+  }
 }
 
 //POST
